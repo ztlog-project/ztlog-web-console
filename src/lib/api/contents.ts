@@ -1,5 +1,5 @@
 import { api } from './client';
-import { Content, ApiResponse, PaginatedResponse } from './types';
+import { Content, ApiResponse, PaginatedResponse, ContentSearchType } from './types';
 
 export const contentsApi = {
   getList: (page: number = 1): Promise<ApiResponse<PaginatedResponse<Content>>> =>
@@ -15,5 +15,8 @@ export const contentsApi = {
     api.put('/v1/contents', data),
 
   delete: (ctntNo: number): Promise<ApiResponse<void>> =>
-    api.delete(`/v1/contents/${ctntNo}`)
+    api.delete(`/v1/contents/${ctntNo}`),
+
+  search: (type: ContentSearchType, param: string, page: number = 1): Promise<ApiResponse<PaginatedResponse<Content>>> =>
+    api.get('/v1/contents/search', { type, param, page }),
 };

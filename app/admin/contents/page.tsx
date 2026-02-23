@@ -1,14 +1,17 @@
 'use client';
 
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState } from 'react';
+import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import Pagination from '@/components/Pagination';
 import { contentsApi } from '@/lib/api/contents';
-import { Content } from '@/lib/api/types';
+import { Content, ContentSearchType } from '@/lib/api/types';
 
 export default function PostsListPage() {
+  const searchParams = useSearchParams();
   const [posts, setPosts] = useState<Content[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
+  const [searchType, setSearchType] = useState<ContentSearchType>('TITLE_CONTENT');
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
@@ -34,19 +37,54 @@ export default function PostsListPage() {
     }
   }
 
-  useEffect(() => {
-    loadPosts(1);
-  }, []);
+  async function searchPosts(type: ContentSearchType, query: string, page: number = 1) {
+    setLoading(true);
+    setError('');
+    try {
+      const res = await contentsApi.search(type, query, page);
+      if (res.data) {
+        const data = res.data as any;
+        const postList = data.content || data.list || (Array.isArray(data) ? data : []);
+        setPosts(postList);
+        setTotalCount(data.totalElements ?? data.count ?? data.totalCount ?? postList.length);
+        setTotalPages(data.totalPages ?? (Math.ceil((data.totalElements ?? postList.length) / 10) || 1));
+      }
+    } catch (e: any) {
+      setError(e.message);
+    } finally {
+      setLoading(false);
+    }
+  }
 
-  const filteredPosts = useMemo(() => {
-    return searchQuery
-      ? posts.filter((p) => p.title?.toLowerCase().includes(searchQuery.toLowerCase()))
-      : posts;
-  }, [posts, searchQuery]);
+  useEffect(() => {
+    const q = searchParams.get('q') ?? '';
+    const t = (searchParams.get('type') as ContentSearchType) ?? 'TITLE_CONTENT';
+    if (q) {
+      setSearchQuery(q);
+      setSearchType(t);
+      searchPosts(t, q, 1);
+    } else {
+      loadPosts(1);
+    }
+  }, [searchParams]);
+
+  function handleSearch(e: React.FormEvent) {
+    e.preventDefault();
+    setCurrentPage(1);
+    if (searchQuery.trim()) {
+      searchPosts(searchType, searchQuery, 1);
+    } else {
+      loadPosts(1);
+    }
+  }
 
   function handlePageChange(page: number) {
     setCurrentPage(page);
-    loadPosts(page);
+    if (searchQuery.trim()) {
+      searchPosts(searchType, searchQuery, page);
+    } else {
+      loadPosts(page);
+    }
   }
 
   async function deletePost(ctntNo: number) {
@@ -81,8 +119,18 @@ export default function PostsListPage() {
 
       {/* Search */}
       <div className="bg-card rounded-lg shadow-sm border border-border mb-6">
-        <div className="p-4">
-          <div className="flex items-center bg-bg rounded-lg px-3 py-2">
+        <form onSubmit={handleSearch} className="p-4 flex gap-2">
+          <select
+            value={searchType}
+            onChange={(e) => setSearchType(e.target.value as ContentSearchType)}
+            className="border border-border rounded-lg px-3 py-2 text-sm text-text bg-bg outline-none"
+          >
+            <option value="TITLE_CONTENT">제목+내용</option>
+            <option value="TITLE">제목</option>
+            <option value="CONTENT">내용</option>
+            <option value="TAG">태그</option>
+          </select>
+          <div className="flex items-center bg-bg rounded-lg border border-border px-3 py-2 flex-1">
             <svg
               className="w-4 h-4 text-text-light mr-2 flex-shrink-0"
               fill="none"
@@ -100,11 +148,26 @@ export default function PostsListPage() {
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="제목으로 검색..."
+              placeholder="검색어를 입력하세요..."
               className="bg-transparent border-none outline-none text-sm text-text w-full"
             />
           </div>
-        </div>
+          <button
+            type="submit"
+            className="px-4 py-2 bg-primary text-white rounded-lg text-sm font-medium hover:bg-primary-hover transition-colors"
+          >
+            검색
+          </button>
+          {searchQuery && (
+            <button
+              type="button"
+              onClick={() => { setSearchQuery(''); loadPosts(1); setCurrentPage(1); }}
+              className="px-4 py-2 border border-border rounded-lg text-sm text-text-light hover:bg-bg transition-colors"
+            >
+              초기화
+            </button>
+          )}
+        </form>
       </div>
 
       {loading ? (
@@ -140,7 +203,7 @@ export default function PostsListPage() {
                 </tr>
               </thead>
               <tbody>
-                {filteredPosts.map((post) => (
+                {posts.map((post) => (
                   <tr
                     key={post.ctntNo}
                     className="border-b border-border last:border-b-0 hover:bg-bg/50 transition-colors"
@@ -201,7 +264,7 @@ export default function PostsListPage() {
             </table>
           </div>
 
-          {filteredPosts.length === 0 && (
+          {posts.length === 0 && (
             <div className="p-12 text-center">
               <p className="text-text-light">게시물이 없습니다.</p>
             </div>

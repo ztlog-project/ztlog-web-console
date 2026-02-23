@@ -43,3 +43,5 @@ export interface PaginatedResponse<T> {
   totalElements: number;
   page: number;
 }
+
+export type ContentSearchType = 'TITLE' | 'CONTENT' | 'TITLE_CONTENT' | 'TAG';
