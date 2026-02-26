@@ -28,6 +28,7 @@ export interface Content {
 export interface Tag {
   tagNo: number;
   tagName: string;
+  sort?: number;
 }
 
 export interface DashboardStats {

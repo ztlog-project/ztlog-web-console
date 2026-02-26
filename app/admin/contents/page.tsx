@@ -100,10 +100,10 @@ export default function PostsListPage() {
   return (
     <div>
       {/* Page Header */}
-      <div className="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div className="flex flex-col gap-4 mb-6 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-2xl font-bold text-text">게시물 관리</h1>
-          <p className="text-sm text-text-light mt-1">총 {totalCount}개의 게시물</p>
+          <p className="mt-1 text-sm text-text-light">총 {totalCount}개의 게시물</p>
         </div>
         <Link
           href="/admin/contents/new"
@@ -118,21 +118,21 @@ export default function PostsListPage() {
       </div>
 
       {/* Search */}
-      <div className="bg-card rounded-lg shadow-sm border border-border mb-6">
-        <form onSubmit={handleSearch} className="p-4 flex gap-2">
+      <div className="mb-6 border rounded-lg shadow-sm bg-card border-border">
+        <form onSubmit={handleSearch} className="flex gap-2 p-4">
           <select
             value={searchType}
             onChange={(e) => setSearchType(e.target.value as ContentSearchType)}
-            className="border border-border rounded-lg px-3 py-2 text-sm text-text bg-bg outline-none"
+            className="px-3 py-2 text-sm border rounded-lg outline-none border-border text-text bg-bg"
           >
             <option value="TITLE_CONTENT">제목+내용</option>
             <option value="TITLE">제목</option>
             <option value="CONTENT">내용</option>
             <option value="TAG">태그</option>
           </select>
-          <div className="flex items-center bg-bg rounded-lg border border-border px-3 py-2 flex-1">
+          <div className="flex items-center flex-1 px-3 py-2 border rounded-lg bg-bg border-border">
             <svg
-              className="w-4 h-4 text-text-light mr-2 flex-shrink-0"
+              className="flex-shrink-0 w-4 h-4 mr-2 text-text-light"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -149,12 +149,12 @@ export default function PostsListPage() {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="검색어를 입력하세요..."
-              className="bg-transparent border-none outline-none text-sm text-text w-full"
+              className="w-full text-sm bg-transparent border-none outline-none text-text"
             />
           </div>
           <button
             type="submit"
-            className="px-4 py-2 bg-primary text-white rounded-lg text-sm font-medium hover:bg-primary-hover transition-colors"
+            className="px-4 py-2 text-sm font-medium text-white transition-colors rounded-lg bg-primary hover:bg-primary-hover"
           >
             검색
           </button>
@@ -162,7 +162,7 @@ export default function PostsListPage() {
             <button
               type="button"
               onClick={() => { setSearchQuery(''); loadPosts(1); setCurrentPage(1); }}
-              className="px-4 py-2 border border-border rounded-lg text-sm text-text-light hover:bg-bg transition-colors"
+              className="px-4 py-2 text-sm transition-colors border rounded-lg border-border text-text-light hover:bg-bg"
             >
               초기화
             </button>
@@ -175,29 +175,29 @@ export default function PostsListPage() {
           <div className="text-text-light">로딩 중...</div>
         </div>
       ) : error ? (
-        <div className="p-4 bg-danger/10 text-danger text-sm rounded-lg">{error}</div>
+        <div className="p-4 text-sm rounded-lg bg-danger/10 text-danger">{error}</div>
       ) : (
-        <div className="bg-card rounded-lg shadow-sm border border-border">
+        <div className="border rounded-lg shadow-sm bg-card border-border">
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
                 <tr className="border-b border-border">
-                  <th className="text-left text-xs font-medium text-text-light uppercase tracking-wider px-6 py-3 w-10">
+                  <th className="w-10 px-6 py-3 text-xs font-medium tracking-wider text-left uppercase text-text-light">
                     No
                   </th>
-                  <th className="text-left text-xs font-medium text-text-light uppercase tracking-wider px-6 py-3">
+                  <th className="px-6 py-3 text-xs font-medium tracking-wider text-left uppercase text-text-light">
                     제목
                   </th>
-                  <th className="text-left text-xs font-medium text-text-light uppercase tracking-wider px-6 py-3">
+                  <th className="px-6 py-3 text-xs font-medium tracking-wider text-left uppercase text-text-light">
                     작성자
                   </th>
-                  <th className="text-left text-xs font-medium text-text-light uppercase tracking-wider px-6 py-3">
+                  <th className="px-6 py-3 text-xs font-medium tracking-wider text-left uppercase text-text-light">
                     작성일
                   </th>
-                  <th className="text-left text-xs font-medium text-text-light uppercase tracking-wider px-6 py-3">
+                  <th className="px-6 py-3 text-xs font-medium tracking-wider text-left uppercase text-text-light">
                     수정일
                   </th>
-                  <th className="text-left text-xs font-medium text-text-light uppercase tracking-wider px-6 py-3">
+                  <th className="px-6 py-3 text-xs font-medium tracking-wider text-left uppercase text-text-light">
                     액션
                   </th>
                 </tr>
@@ -206,13 +206,13 @@ export default function PostsListPage() {
                 {posts.map((post) => (
                   <tr
                     key={post.ctntNo}
-                    className="border-b border-border last:border-b-0 hover:bg-bg/50 transition-colors"
+                    className="transition-colors border-b border-border last:border-b-0 hover:bg-bg/50"
                   >
                     <td className="px-6 py-3.5 text-sm text-text-light">{post.ctntNo}</td>
                     <td className="px-6 py-3.5">
                       <Link
                         href={`/admin/contents/${post.ctntNo}`}
-                        className="text-sm text-text hover:text-primary transition-colors font-medium"
+                        className="text-sm font-medium transition-colors text-text hover:text-primary"
                       >
                         {post.title}
                       </Link>

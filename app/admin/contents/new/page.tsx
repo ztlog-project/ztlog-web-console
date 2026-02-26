@@ -16,6 +16,10 @@ export default function PostCreatePage() {
   const [allTags, setAllTags] = useState<Tag[]>([]);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
+  const [tagSaving, setTagSaving] = useState(false);
+  const [newTagName, setNewTagName] = useState('');
+  const [editingTagNo, setEditingTagNo] = useState<number | null>(null);
+  const [editingTagName, setEditingTagName] = useState('');
   const router = useRouter();
 
   useEffect(() => {
@@ -23,21 +27,53 @@ export default function PostCreatePage() {
     setSubTitle(plain.slice(0, 100));
   }, [body]);
 
-  useEffect(() => {
-    async function loadTags() {
-      try {
-        const res = await tagsApi.getList(1);
-        if ((res as any).list) {
-          setAllTags((res as any).list);
-        } else if (res.data && Array.isArray((res.data as any).content)) {
-          setAllTags((res.data as any).content);
-        }
-      } catch (e) {
-        // 태그 목록 로딩 실패는 무시
-      }
+  async function loadTags() {
+    try {
+      const res = await tagsApi.getList(1);
+      const r = res as any;
+      const list = r.list ?? r.data?.list ?? r.data?.content ?? [];
+      setAllTags(list);
+    } catch (e) {
+      // 태그 목록 로딩 실패는 무시
     }
+  }
+
+  useEffect(() => {
     loadTags();
   }, []);
+
+  async function addTag() {
+    if (!newTagName.trim() || tagSaving) return;
+    setTagSaving(true);
+    try {
+      await tagsApi.create({ tagName: newTagName.trim(), sort: 0 });
+      setNewTagName('');
+      await loadTags();
+    } catch (e: any) {
+      alert('태그 추가 실패: ' + e.message);
+    } finally {
+      setTagSaving(false);
+    }
+  }
+
+  function startTagEdit(tag: Tag) {
+    setEditingTagNo(tag.tagNo);
+    setEditingTagName(tag.tagName);
+  }
+
+  async function saveTagEdit(tagNo: number) {
+    if (!editingTagName.trim() || tagSaving) return;
+    setTagSaving(true);
+    try {
+      await tagsApi.update({ tagNo, tagName: editingTagName.trim(), sort: 0 });
+      setEditingTagNo(null);
+      await loadTags();
+    } catch (e: any) {
+      alert('태그 수정 실패: ' + e.message);
+    } finally {
+      setTagSaving(false);
+    }
+  }
 
   function toggleTag(tagNo: number) {
     if (selectedTags.includes(tagNo)) {
@@ -138,23 +174,95 @@ export default function PostCreatePage() {
             <div className="p-6 border rounded-lg shadow-sm bg-card border-border">
               <h3 className="mb-4 text-sm font-semibold tracking-wider uppercase text-text">태그</h3>
 
-              {allTags.length > 0 ? (
-                <div className="flex flex-wrap gap-2 mb-6">
-                  {allTags.map((tag) => (
-                    <button
-                      key={tag.tagNo}
-                      type="button"
-                      onClick={() => toggleTag(tag.tagNo)}
-                      className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors
-                        ${selectedTags.includes(tag.tagNo) ? 'bg-primary text-white' : 'bg-bg text-text-light hover:bg-border'}`}
-                    >
-                      {tag.tagName}
-                    </button>
-                  ))}
-                </div>
-              ) : (
-                <p className="mb-6 text-sm text-text-light">등록된 태그가 없습니다.</p>
-              )}
+              <div className="flex flex-wrap gap-2 mb-3">
+                {allTags.map((tag) =>
+                  editingTagNo === tag.tagNo ? (
+                    <div key={tag.tagNo} className="flex items-center gap-1">
+                      <input
+                        type="text"
+                        value={editingTagName}
+                        onChange={(e) => setEditingTagName(e.target.value)}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter') { e.preventDefault(); saveTagEdit(tag.tagNo); }
+                          if (e.key === 'Escape') setEditingTagNo(null);
+                        }}
+                        maxLength={15}
+                        disabled={tagSaving}
+                        autoFocus
+                        className="px-2 py-1 text-xs border border-primary rounded-full w-24 bg-white focus:outline-none focus:ring-1 focus:ring-primary/50 disabled:opacity-50"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => saveTagEdit(tag.tagNo)}
+                        disabled={tagSaving}
+                        className="p-1 text-success hover:bg-success/10 rounded transition-colors disabled:opacity-50"
+                        title="저장"
+                      >
+                        <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                        </svg>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setEditingTagNo(null)}
+                        className="p-1 text-text-light hover:bg-bg rounded transition-colors"
+                        title="취소"
+                      >
+                        <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                      </button>
+                    </div>
+                  ) : (
+                    <div key={tag.tagNo} className="group flex items-center gap-0.5">
+                      <button
+                        type="button"
+                        onClick={() => toggleTag(tag.tagNo)}
+                        className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors
+                          ${selectedTags.includes(tag.tagNo) ? 'bg-primary text-white' : 'bg-bg text-text-light hover:bg-border'}`}
+                      >
+                        {tag.tagName}
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => startTagEdit(tag)}
+                        disabled={tagSaving}
+                        className="opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded text-text-light hover:text-primary hover:bg-primary/10 disabled:opacity-0"
+                        title="태그 수정"
+                      >
+                        <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                        </svg>
+                      </button>
+                    </div>
+                  )
+                )}
+                {allTags.length === 0 && (
+                  <p className="text-sm text-text-light">등록된 태그가 없습니다.</p>
+                )}
+              </div>
+
+              {/* 새 태그 추가 */}
+              <div className="flex gap-2 mb-6">
+                <input
+                  type="text"
+                  value={newTagName}
+                  onChange={(e) => setNewTagName(e.target.value)}
+                  onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); addTag(); } }}
+                  placeholder="새 태그 추가"
+                  maxLength={15}
+                  disabled={tagSaving}
+                  className="flex-1 px-3 py-1.5 text-xs border border-border rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary disabled:opacity-50"
+                />
+                <button
+                  type="button"
+                  onClick={addTag}
+                  disabled={tagSaving || !newTagName.trim()}
+                  className="px-3 py-1.5 text-xs bg-primary text-white rounded-lg hover:bg-primary-hover disabled:opacity-50 transition-colors"
+                >
+                  추가
+                </button>
+              </div>
 
               <div className="flex gap-3">
                 <button
