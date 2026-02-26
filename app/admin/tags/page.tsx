@@ -86,13 +86,13 @@ export default function CategoriesPage() {
       {/* Page Header */}
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-text">태그 관리</h1>
-        <p className="text-sm text-text-light mt-1">블로그 태그를 추가, 수정, 삭제합니다</p>
+        <p className="mt-1 text-sm text-text-light">블로그 태그를 추가, 수정, 삭제합니다</p>
       </div>
 
       {/* Add Tag */}
-      <div className="bg-card rounded-lg shadow-sm border border-border p-6 mb-6">
-        <h2 className="text-sm font-semibold text-text mb-4 uppercase tracking-wider">새 태그 추가</h2>
-        <form onSubmit={addTag} className="flex flex-col sm:flex-row gap-3">
+      <div className="p-6 mb-6 border rounded-lg shadow-sm bg-card border-border">
+        <h2 className="mb-4 text-sm font-semibold tracking-wider uppercase text-text">새 태그 추가</h2>
+        <form onSubmit={addTag} className="flex flex-col gap-3 sm:flex-row">
           <input
             type="text"
             value={newName}
@@ -125,33 +125,33 @@ export default function CategoriesPage() {
           <div className="text-text-light">로딩 중...</div>
         </div>
       ) : error ? (
-        <div className="p-4 bg-danger/10 text-danger text-sm rounded-lg">{error}</div>
+        <div className="p-4 text-sm rounded-lg bg-danger/10 text-danger">{error}</div>
       ) : (
-        <div className="bg-card rounded-lg shadow-sm border border-border">
+        <div className="border rounded-lg shadow-sm bg-card border-border">
           <div className="overflow-x-auto">
-            <table className="w-full">
+            <table className="w-full table-fixed">
               <thead>
                 <tr className="border-b border-border">
-                  <th className="text-left text-xs font-medium text-text-light uppercase tracking-wider px-6 py-3 w-10">
-                    #
+                  <th className="w-16 px-6 py-3 text-xs font-medium tracking-wider text-left uppercase text-text-light">
+                    no
                   </th>
-                  <th className="text-left text-xs font-medium text-text-light uppercase tracking-wider px-6 py-3">
+                  <th className="px-6 py-3 text-xs font-medium tracking-wider text-left uppercase text-text-light">
                     이름
                   </th>
-                  <th className="text-left text-xs font-medium text-text-light uppercase tracking-wider px-6 py-3 w-24">
+                  <th className="w-32 px-6 py-3 text-xs font-medium tracking-wider text-left uppercase text-text-light">
                     게시물 수
                   </th>
-                  <th className="text-left text-xs font-medium text-text-light uppercase tracking-wider px-6 py-3">
+                  <th className="w-40 px-6 py-3 text-xs font-medium tracking-wider text-left uppercase text-text-light">
                     생성일
                   </th>
-                  <th className="text-left text-xs font-medium text-text-light uppercase tracking-wider px-6 py-3 w-28">
-                    액션
+                  <th className="w-28 px-6 py-3 text-xs font-medium tracking-wider text-left uppercase text-text-light">
+                    삭제
                   </th>
                 </tr>
               </thead>
               <tbody>
                 {tagList.map((tag, i) => (
-                  <tr key={tag.tagNo} className="border-b border-border last:border-b-0 hover:bg-bg/50 transition-colors">
+                  <tr key={tag.tagNo} className="transition-colors border-b border-border last:border-b-0 hover:bg-bg/50">
                     <td className="px-6 py-3.5 text-sm text-text-light">{i + 1}</td>
                     <td className="px-6 py-3.5">
                       {editingId === tag.tagNo ? (
@@ -159,12 +159,22 @@ export default function CategoriesPage() {
                           type="text"
                           value={editName}
                           onChange={(e) => setEditName(e.target.value)}
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter') { e.preventDefault(); saveEdit(tag.tagNo); }
+                            if (e.key === 'Escape') cancelEdit();
+                          }}
                           maxLength={15}
+                          autoFocus
                           className="px-3 py-1.5 border border-primary rounded text-sm text-text bg-white w-full
                             focus:outline-none focus:ring-2 focus:ring-primary/30"
                         />
                       ) : (
-                        <span className="text-sm text-text font-medium">{tag.tagName}</span>
+                        <span
+                          className="inline-block px-3 py-1.5 border border-transparent text-sm font-medium text-text cursor-pointer hover:text-primary transition-colors"
+                          onClick={() => startEdit(tag)}
+                        >
+                          {tag.tagName}
+                        </span>
                       )}
                     </td>
                     <td className="px-6 py-3.5">
@@ -176,67 +186,32 @@ export default function CategoriesPage() {
                       {(tag as any).inpDttm ? new Date((tag as any).inpDttm).toLocaleDateString('ko-KR') : '-'}
                     </td>
                     <td className="px-6 py-3.5">
-                      <div className="flex items-center gap-2">
-                        {editingId === tag.tagNo ? (
-                          <>
-                            <button
-                              onClick={() => saveEdit(tag.tagNo)}
-                              disabled={saving}
-                              className="p-1.5 text-success hover:bg-success/10 transition-colors rounded-lg disabled:opacity-50"
-                              title="저장"
-                            >
-                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
-                              </svg>
-                            </button>
-                            <button
-                              onClick={cancelEdit}
-                              className="p-1.5 text-text-light hover:bg-bg transition-colors rounded-lg"
-                              title="취소"
-                            >
-                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  strokeWidth="2"
-                                  d="M6 18L18 6M6 6l12 12"
-                                />
-                              </svg>
-                            </button>
-                          </>
-                        ) : (
-                          <>
-                            <button
-                              onClick={() => startEdit(tag)}
-                              className="p-1.5 text-text-light hover:text-primary transition-colors rounded-lg hover:bg-primary/10"
-                              title="수정"
-                            >
-                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  strokeWidth="2"
-                                  d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
-                                />
-                              </svg>
-                            </button>
-                            <button
-                              onClick={() => deleteTag(tag.tagNo)}
-                              className="p-1.5 text-text-light hover:text-danger transition-colors rounded-lg hover:bg-danger/10"
-                              title="삭제"
-                            >
-                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  strokeWidth="2"
-                                  d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                                />
-                              </svg>
-                            </button>
-                          </>
-                        )}
-                      </div>
+                      {editingId === tag.tagNo ? (
+                        <button
+                          onClick={cancelEdit}
+                          className="p-1.5 text-text-light hover:text-text transition-colors rounded-lg hover:bg-bg"
+                          title="취소"
+                        >
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                          </svg>
+                        </button>
+                      ) : (
+                        <button
+                          onClick={() => deleteTag(tag.tagNo)}
+                          className="p-1.5 text-text-light hover:text-danger transition-colors rounded-lg hover:bg-danger/10"
+                          title="삭제"
+                        >
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth="2"
+                              d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                            />
+                          </svg>
+                        </button>
+                      )}
                     </td>
                   </tr>
                 ))}
