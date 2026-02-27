@@ -13,6 +13,8 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 ENV NEXT_TELEMETRY_DISABLED=1
+ARG NEXT_PUBLIC_API_TARGET
+ENV NEXT_PUBLIC_API_TARGET=${NEXT_PUBLIC_API_TARGET:-http://localhost:8089}
 RUN npm run build
 
 # ── runner: 실행 이미지 ───────────────────────────

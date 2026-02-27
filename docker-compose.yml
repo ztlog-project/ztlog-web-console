@@ -1,13 +1,12 @@
 services:
   ztlog-web-console:
-    image: ${DOCKERHUB_USERNAME}/ztlog-web-console:latest
+    image: zoetrope56/ztlog-web-console:latest
     container_name: ztlog-web-console
     ports:
       - "3001:3001"
     environment:
       - NODE_ENV=production
       - PORT=3001
-      - NEXT_PUBLIC_API_TARGET=${BACKEND_URL:-http://host.docker.internal:8089}
     extra_hosts:
       - "host.docker.internal:host-gateway"
     restart: unless-stopped

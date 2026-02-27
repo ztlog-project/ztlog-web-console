@@ -42,6 +42,8 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+          build-args: |
+            NEXT_PUBLIC_API_TARGET=http://${{ secrets.EC2_HOST }}:8089
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
@@ -82,8 +84,6 @@ jobs:
           script: |
             echo ${{ secrets.DOCKERHUB_TOKEN }} | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
             cd /home/ec2-user/web/ztlog-web-console
-            export DOCKERHUB_USERNAME=${{ secrets.DOCKERHUB_USERNAME }}
-            export BACKEND_URL=http://${{ secrets.EC2_HOST }}:8089
             docker-compose pull
             docker-compose up -d --remove-orphans
             docker image prune -f
