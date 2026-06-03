@@ -32,8 +32,8 @@ export default function LoginPage() {
       } else {
         setError(res.message || '로그인에 실패했습니다.');
       }
-    } catch (e: any) {
-      setError(e.message || '로그인 중 오류가 발생했습니다.');
+    } catch (e: unknown) {
+      setError(e instanceof Error ? e.message : '로그인 중 오류가 발생했습니다.');
     } finally {
       setLoading(false);
     }

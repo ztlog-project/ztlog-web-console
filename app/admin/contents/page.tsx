@@ -32,8 +32,8 @@ export default function PostsListPage() {
         setTotalCount(data.totalElements ?? data.count ?? data.totalCount ?? postList.length);
         setTotalPages(data.totalPages ?? (Math.ceil((data.totalElements ?? postList.length) / 10) || 1));
       }
-    } catch (e: any) {
-      setError(e.message);
+    } catch (e: unknown) {
+      setError(e instanceof Error ? e.message : '오류가 발생했습니다.');
     } finally {
       setLoading(false);
     }
@@ -51,8 +51,8 @@ export default function PostsListPage() {
         setTotalCount(data.totalElements ?? data.count ?? data.totalCount ?? postList.length);
         setTotalPages(data.totalPages ?? (Math.ceil((data.totalElements ?? postList.length) / 10) || 1));
       }
-    } catch (e: any) {
-      setError(e.message);
+    } catch (e: unknown) {
+      setError(e instanceof Error ? e.message : '오류가 발생했습니다.');
     } finally {
       setLoading(false);
     }
@@ -94,8 +94,8 @@ export default function PostsListPage() {
     try {
       await contentsApi.delete(ctntNo);
       await loadPosts(currentPage);
-    } catch (e: any) {
-      setError('삭제 실패: ' + e.message);
+    } catch (e: unknown) {
+      setError('삭제 실패: ' + (e instanceof Error ? e.message : '오류가 발생했습니다.'));
     } finally {
       setConfirmDelete(null);
     }

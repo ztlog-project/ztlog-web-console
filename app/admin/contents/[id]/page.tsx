@@ -46,8 +46,8 @@ export default function PostEditPage() {
           }
           if (postData.cateNo) setSelectedCateNo(postData.cateNo);
         }
-      } catch (e: any) {
-        setError(e.message);
+      } catch (e: unknown) {
+        setError(e instanceof Error ? e.message : '오류가 발생했습니다.');
       } finally {
         setLoading(false);
       }
@@ -80,8 +80,8 @@ export default function PostEditPage() {
         tags: selectedTags.map(tagNo => ({ tagNo })),
       });
       router.push('/admin/contents');
-    } catch (e: any) {
-      setError(e.message || '수정 중 오류가 발생했습니다.');
+    } catch (e: unknown) {
+      setError(e instanceof Error ? e.message : '수정 중 오류가 발생했습니다.');
       setSaving(false);
     }
   }

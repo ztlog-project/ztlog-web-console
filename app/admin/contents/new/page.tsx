@@ -45,8 +45,8 @@ export default function PostCreatePage() {
         tags: selectedTags.map(tagNo => ({ tagNo })),
       });
       router.push('/admin/contents');
-    } catch (e: any) {
-      setError(e.message || '저장 중 오류가 발생했습니다.');
+    } catch (e: unknown) {
+      setError(e instanceof Error ? e.message : '저장 중 오류가 발생했습니다.');
     } finally {
       setSaving(false);
     }
