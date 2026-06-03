@@ -7,6 +7,7 @@ import { contentsApi } from '@/lib/api/contents';
 import TipTapEditor from '@/components/TipTapEditor';
 import TagSelector from '@/components/TagSelector';
 import { flattenCategories } from '@/lib/utils/category';
+import { htmlToPlainText } from '@/lib/utils/text';
 import { useCategoryList } from '@/lib/hooks/useCategoryList';
 
 export default function PostCreatePage() {
@@ -21,8 +22,7 @@ export default function PostCreatePage() {
   const router = useRouter();
 
   useEffect(() => {
-    const plain = body.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
-    setSubTitle(plain.slice(0, 100));
+    setSubTitle(htmlToPlainText(body));
   }, [body]);
 
   async function handleSubmit(e: FormEvent) {

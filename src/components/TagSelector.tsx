@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { tagsApi } from '@/lib/api/tags';
-import { Tag } from '@/lib/api/types';
+import { Tag, pageItems } from '@/lib/api/types';
 
 interface TagSelectorProps {
   selectedTags: number[];
@@ -21,9 +21,9 @@ export default function TagSelector({ selectedTags, onChange, disabled }: TagSel
   async function loadTags() {
     try {
       const firstRes = await tagsApi.getList(1);
-      const r = firstRes as any;
-      const firstList: Tag[] = r.data?.list ?? r.data?.content ?? r.list ?? [];
-      const totalPages: number = r.data?.totalPages ?? r.totalPages ?? 1;
+      const firstData = firstRes.data;
+      const firstList = firstData ? pageItems(firstData) : [];
+      const totalPages = firstData?.totalPages ?? 1;
 
       if (totalPages <= 1) {
         setAllTags(firstList);
@@ -33,11 +33,8 @@ export default function TagSelector({ selectedTags, onChange, disabled }: TagSel
       const rest = await Promise.all(
         Array.from({ length: totalPages - 1 }, (_, i) => tagsApi.getList(i + 2))
       );
-      const allLists = rest.map(res => {
-        const rr = res as any;
-        return (rr.data?.list ?? rr.data?.content ?? rr.list ?? []) as Tag[];
-      });
-      setAllTags([...firstList, ...allLists.flat()]);
+      const allLists = rest.flatMap(res => res.data ? pageItems(res.data) : []);
+      setAllTags([...firstList, ...allLists]);
     } catch {
       // 태그 목록 로딩 실패는 무시
     }

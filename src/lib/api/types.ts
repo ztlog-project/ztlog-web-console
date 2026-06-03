@@ -46,10 +46,25 @@ export interface DashboardStats {
 }
 
 export interface PaginatedResponse<T> {
-  content: T[];
-  totalPages: number;
-  totalElements: number;
-  page: number;
+  content?: T[];
+  list?: T[];
+  totalPages?: number;
+  totalElements?: number;
+  count?: number;
+  totalCount?: number;
+  page?: number;
+}
+
+export function pageItems<T>(data: PaginatedResponse<T>): T[] {
+  return data.content ?? data.list ?? [];
+}
+
+export function pageTotalElements<T>(data: PaginatedResponse<T>, fallback: number): number {
+  return data.totalElements ?? data.count ?? data.totalCount ?? fallback;
+}
+
+export function pageTotalPages<T>(data: PaginatedResponse<T>, itemCount: number): number {
+  return data.totalPages ?? Math.ceil((data.totalElements ?? itemCount) / 10) || 1;
 }
 
 export type ContentSearchType = 'TITLE' | 'CONTENT' | 'TITLE_CONTENT' | 'TAG';

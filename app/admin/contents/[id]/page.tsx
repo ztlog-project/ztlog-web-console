@@ -8,12 +8,13 @@ import { Content } from '@/lib/api/types';
 import TipTapEditor from '@/components/TipTapEditor';
 import TagSelector from '@/components/TagSelector';
 import { flattenCategories } from '@/lib/utils/category';
+import { htmlToPlainText } from '@/lib/utils/text';
 import { useCategoryList } from '@/lib/hooks/useCategoryList';
 
 export default function PostEditPage() {
   const params = useParams();
   const router = useRouter();
-  const ctntNo = parseInt(params.id as string);
+  const ctntNo = Number(params.id);
 
   const [post, setPost] = useState<Content | null>(null);
   const [title, setTitle] = useState('');
@@ -27,6 +28,10 @@ export default function PostEditPage() {
   const { categories: allCategories } = useCategoryList();
 
   useEffect(() => {
+    if (isNaN(ctntNo)) {
+      router.push('/admin/contents');
+      return;
+    }
     async function loadData() {
       try {
         const contentRes = await contentsApi.getDetail(ctntNo);
@@ -37,8 +42,7 @@ export default function PostEditPage() {
           setTitle(postData.title || '');
           const bodyContent = postData.body || postData.content || '';
           setBody(bodyContent);
-          const subTitleValue = postData.subTitle ||
-            bodyContent.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 100);
+          const subTitleValue = postData.subTitle || htmlToPlainText(bodyContent);
           setSubTitle(subTitleValue);
           const linkedTags = postData.tags || postData.tagList || [];
           if (linkedTags.length > 0) {
@@ -57,8 +61,7 @@ export default function PostEditPage() {
 
   function handleBodyChange(html: string) {
     setBody(html);
-    const plain = html.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
-    setSubTitle(plain.slice(0, 100));
+    setSubTitle(htmlToPlainText(html));
   }
 
   async function handleSubmit(e: FormEvent) {
@@ -82,6 +85,7 @@ export default function PostEditPage() {
       router.push('/admin/contents');
     } catch (e: unknown) {
       setError(e instanceof Error ? e.message : '수정 중 오류가 발생했습니다.');
+    } finally {
       setSaving(false);
     }
   }
@@ -92,7 +96,10 @@ export default function PostEditPage() {
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold text-text">게시물 수정 (ID: {ctntNo})</h1>
+        <div>
+          <h1 className="text-2xl font-bold text-text">게시물 수정</h1>
+          <p className="mt-1 text-sm text-text-light">{post.title}</p>
+        </div>
         <Link href="/admin/contents" className="text-sm text-text-light hover:underline">목록으로</Link>
       </div>
 

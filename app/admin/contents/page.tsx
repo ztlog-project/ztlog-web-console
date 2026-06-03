@@ -6,7 +6,7 @@ import Link from 'next/link';
 import Pagination from '@/components/Pagination';
 import ConfirmModal from '@/components/ConfirmModal';
 import { contentsApi } from '@/lib/api/contents';
-import { Content, ContentSearchType } from '@/lib/api/types';
+import { Content, ContentSearchType, pageItems, pageTotalElements, pageTotalPages } from '@/lib/api/types';
 
 export default function PostsListPage() {
   const searchParams = useSearchParams();
@@ -26,11 +26,11 @@ export default function PostsListPage() {
     try {
       const res = await contentsApi.getList(page);
       if (res.data) {
-        const data = res.data as any;
-        const postList = data.content || data.list || (Array.isArray(data) ? data : []);
+        const data = res.data;
+        const postList = pageItems(data);
         setPosts(postList);
-        setTotalCount(data.totalElements ?? data.count ?? data.totalCount ?? postList.length);
-        setTotalPages(data.totalPages ?? (Math.ceil((data.totalElements ?? postList.length) / 10) || 1));
+        setTotalCount(pageTotalElements(data, postList.length));
+        setTotalPages(pageTotalPages(data, postList.length));
       }
     } catch (e: unknown) {
       setError(e instanceof Error ? e.message : '오류가 발생했습니다.');
@@ -45,11 +45,11 @@ export default function PostsListPage() {
     try {
       const res = await contentsApi.search(type, query, page);
       if (res.data) {
-        const data = res.data as any;
-        const postList = data.content || data.list || (Array.isArray(data) ? data : []);
+        const data = res.data;
+        const postList = pageItems(data);
         setPosts(postList);
-        setTotalCount(data.totalElements ?? data.count ?? data.totalCount ?? postList.length);
-        setTotalPages(data.totalPages ?? (Math.ceil((data.totalElements ?? postList.length) / 10) || 1));
+        setTotalCount(pageTotalElements(data, postList.length));
+        setTotalPages(pageTotalPages(data, postList.length));
       }
     } catch (e: unknown) {
       setError(e instanceof Error ? e.message : '오류가 발생했습니다.');

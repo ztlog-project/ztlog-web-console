@@ -8,7 +8,7 @@ import Placeholder from '@tiptap/extension-placeholder';
 import Link from '@tiptap/extension-link';
 import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight';
 import { common, createLowlight } from 'lowlight';
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import DOMPurify from 'dompurify';
 
 const lowlight = createLowlight(common);
@@ -74,6 +74,12 @@ export default function TipTapEditor({ value, onChange, disabled = false, placeh
     },
   });
 
+  useEffect(() => {
+    if (editor && value !== editor.getHTML()) {
+      editor.commands.setContent(value, { emitUpdate: false });
+    }
+  }, [editor, value]);
+
   const openLinkInput = useCallback(() => {
     if (!editor) return;
     const prev = editor.getAttributes('link').href ?? '';
@@ -100,7 +106,10 @@ export default function TipTapEditor({ value, onChange, disabled = false, placeh
 
   if (!editor) return null;
 
-  const safeHtml = typeof window !== 'undefined' ? DOMPurify.sanitize(value) : value;
+  const safeHtml = useMemo(
+    () => (typeof window !== 'undefined' ? DOMPurify.sanitize(value) : value),
+    [value]
+  );
 
   return (
     <div className={`border border-border rounded-lg overflow-hidden bg-white ${disabled ? 'opacity-50' : ''}`}>
