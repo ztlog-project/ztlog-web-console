@@ -456,8 +456,8 @@ export default function CategoriesPage() {
         data?.list || data?.content || data?.categories || (Array.isArray(data) ? data : []);
       setTree(list);
       setAllFlat(flattenTree(list));
-    } catch (e: any) {
-      setError(e.message);
+    } catch (e: unknown) {
+      setError(e instanceof Error ? e.message : '오류가 발생했습니다.');
     } finally {
       setLoading(false);
     }
@@ -503,8 +503,8 @@ export default function CategoriesPage() {
       });
       setAddOpen(false);
       await loadCategories();
-    } catch (e: any) {
-      setError('추가 실패: ' + e.message);
+    } catch (e: unknown) {
+      setError('추가 실패: ' + (e instanceof Error ? e.message : '오류가 발생했습니다.'));
     } finally {
       setSaving(false);
     }
@@ -537,8 +537,8 @@ export default function CategoriesPage() {
       });
       setEditingId(null);
       await loadCategories();
-    } catch (e: any) {
-      setError('수정 실패: ' + e.message);
+    } catch (e: unknown) {
+      setError('수정 실패: ' + (e instanceof Error ? e.message : '오류가 발생했습니다.'));
     } finally {
       setSaving(false);
     }
@@ -549,8 +549,8 @@ export default function CategoriesPage() {
     try {
       await categoriesApi.delete(cateNo);
       await loadCategories();
-    } catch (e: any) {
-      setError('삭제 실패: ' + e.message);
+    } catch (e: unknown) {
+      setError('삭제 실패: ' + (e instanceof Error ? e.message : '오류가 발생했습니다.'));
     } finally {
       setConfirmDelete(null);
     }

@@ -10,6 +10,7 @@
 	},
 	"devDependencies": {
 		"@tailwindcss/postcss": "^4.1.18",
+		"@types/dompurify": "^3.0.5",
 		"@types/node": "^25.2.2",
 		"@types/react": "^19.2.13",
 		"@types/react-dom": "^19.2.3",
@@ -29,8 +30,7 @@
 		"@tiptap/pm": "^3.19.0",
 		"@tiptap/react": "^3.19.0",
 		"@tiptap/starter-kit": "^3.19.0",
-		"@types/dompurify": "^3.0.5",
-		"dompurify": "^3.3.3",
+		"dompurify": "^3.4.3",
 		"lowlight": "^3.3.0",
 		"next": "^15.5.12",
 		"react": "^19.2.4",

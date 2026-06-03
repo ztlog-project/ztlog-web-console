@@ -56,8 +56,8 @@ export default function DashboardPage() {
           const data = tagsRes.data as any;
           setTags(data.list || data.content || []);
         }
-      } catch (e: any) {
-        setError(e.message);
+      } catch (e: unknown) {
+        setError(e instanceof Error ? e.message : '오류가 발생했습니다.');
       } finally {
         setLoading(false);
       }

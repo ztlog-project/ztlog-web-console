@@ -20,10 +20,24 @@ export default function TagSelector({ selectedTags, onChange, disabled }: TagSel
 
   async function loadTags() {
     try {
-      const res = await tagsApi.getList(1);
-      const r = res as any;
-      const list = r.list ?? r.data?.list ?? r.data?.content ?? [];
-      setAllTags(list);
+      const firstRes = await tagsApi.getList(1);
+      const r = firstRes as any;
+      const firstList: Tag[] = r.data?.list ?? r.data?.content ?? r.list ?? [];
+      const totalPages: number = r.data?.totalPages ?? r.totalPages ?? 1;
+
+      if (totalPages <= 1) {
+        setAllTags(firstList);
+        return;
+      }
+
+      const rest = await Promise.all(
+        Array.from({ length: totalPages - 1 }, (_, i) => tagsApi.getList(i + 2))
+      );
+      const allLists = rest.map(res => {
+        const rr = res as any;
+        return (rr.data?.list ?? rr.data?.content ?? rr.list ?? []) as Tag[];
+      });
+      setAllTags([...firstList, ...allLists.flat()]);
     } catch {
       // 태그 목록 로딩 실패는 무시
     }
@@ -47,8 +61,8 @@ export default function TagSelector({ selectedTags, onChange, disabled }: TagSel
       await tagsApi.create({ tagName: newTagName.trim(), sort: 0 });
       setNewTagName('');
       await loadTags();
-    } catch (e: any) {
-      setError('태그 추가 실패: ' + e.message);
+    } catch (e: unknown) {
+      setError('태그 추가 실패: ' + (e instanceof Error ? e.message : '오류가 발생했습니다.'));
     } finally {
       setTagSaving(false);
     }
@@ -62,8 +76,8 @@ export default function TagSelector({ selectedTags, onChange, disabled }: TagSel
       await tagsApi.update({ tagNo, tagName: editingTagName.trim(), sort: 0 });
       setEditingTagNo(null);
       await loadTags();
-    } catch (e: any) {
-      setError('태그 수정 실패: ' + e.message);
+    } catch (e: unknown) {
+      setError('태그 수정 실패: ' + (e instanceof Error ? e.message : '오류가 발생했습니다.'));
     } finally {
       setTagSaving(false);
     }

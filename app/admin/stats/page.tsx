@@ -101,8 +101,8 @@ export default function StatsPage() {
         const d = commentRes.value.data as any;
         setCommentStats(d.list ?? d.content ?? (Array.isArray(d) ? d : []));
       }
-    } catch (e: any) {
-      setError(e.message);
+    } catch (e: unknown) {
+      setError(e instanceof Error ? e.message : '오류가 발생했습니다.');
     } finally {
       setLoading(false);
     }
@@ -116,8 +116,8 @@ export default function StatsPage() {
         const d = res.data as any;
         setDailyGrowth(d.list ?? d.content ?? (Array.isArray(d) ? d : []));
       }
-    } catch (e: any) {
-      setError(e.message);
+    } catch (e: unknown) {
+      setError(e instanceof Error ? e.message : '오류가 발생했습니다.');
     } finally {
       setDailyLoading(false);
     }

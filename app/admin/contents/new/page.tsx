@@ -4,11 +4,10 @@ import { useEffect, useState, FormEvent } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { contentsApi } from '@/lib/api/contents';
-import { categoriesApi } from '@/lib/api/categories';
-import { Category } from '@/lib/api/types';
 import TipTapEditor from '@/components/TipTapEditor';
 import TagSelector from '@/components/TagSelector';
 import { flattenCategories } from '@/lib/utils/category';
+import { useCategoryList } from '@/lib/hooks/useCategoryList';
 
 export default function PostCreatePage() {
   const [title, setTitle] = useState('');
@@ -18,23 +17,13 @@ export default function PostCreatePage() {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
   const [selectedCateNo, setSelectedCateNo] = useState<number | null>(null);
-  const [allCategories, setAllCategories] = useState<Category[]>([]);
+  const { categories: allCategories } = useCategoryList();
   const router = useRouter();
 
   useEffect(() => {
     const plain = body.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
     setSubTitle(plain.slice(0, 100));
   }, [body]);
-
-  useEffect(() => {
-    categoriesApi.getList()
-      .then(res => {
-        const data = res.data as any;
-        const list = data?.list ?? data?.content ?? data ?? [];
-        setAllCategories(Array.isArray(list) ? list : []);
-      })
-      .catch(() => {});
-  }, []);
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
@@ -56,8 +45,8 @@ export default function PostCreatePage() {
         tags: selectedTags.map(tagNo => ({ tagNo })),
       });
       router.push('/admin/contents');
-    } catch (e: any) {
-      setError(e.message || '저장 중 오류가 발생했습니다.');
+    } catch (e: unknown) {
+      setError(e instanceof Error ? e.message : '저장 중 오류가 발생했습니다.');
     } finally {
       setSaving(false);
     }

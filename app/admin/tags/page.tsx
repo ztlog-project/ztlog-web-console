@@ -24,8 +24,8 @@ export default function TagsPage() {
         const data = res.data as any;
         setTagList(data.list || data.content || []);
       }
-    } catch (e: any) {
-      setError(e.message);
+    } catch (e: unknown) {
+      setError(e instanceof Error ? e.message : '오류가 발생했습니다.');
     } finally {
       setLoading(false);
     }
@@ -44,8 +44,8 @@ export default function TagsPage() {
       await tagsApi.create({ tagName: newName.trim() });
       setNewName('');
       await loadTags();
-    } catch (e: any) {
-      setError('태그 추가 실패: ' + e.message);
+    } catch (e: unknown) {
+      setError('태그 추가 실패: ' + (e instanceof Error ? e.message : '오류가 발생했습니다.'));
     } finally {
       setSaving(false);
     }
@@ -64,8 +64,8 @@ export default function TagsPage() {
       await tagsApi.update({ tagNo, tagName: editName.trim() });
       setEditingId(null);
       await loadTags();
-    } catch (e: any) {
-      setError('태그 수정 실패: ' + e.message);
+    } catch (e: unknown) {
+      setError('태그 수정 실패: ' + (e instanceof Error ? e.message : '오류가 발생했습니다.'));
     } finally {
       setSaving(false);
     }
@@ -80,8 +80,8 @@ export default function TagsPage() {
     try {
       await tagsApi.delete(tagNo);
       await loadTags();
-    } catch (e: any) {
-      setError('태그 삭제 실패: ' + e.message);
+    } catch (e: unknown) {
+      setError('태그 삭제 실패: ' + (e instanceof Error ? e.message : '오류가 발생했습니다.'));
     } finally {
       setConfirmDelete(null);
     }

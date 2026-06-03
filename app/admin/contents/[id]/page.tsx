@@ -4,11 +4,11 @@ import { useEffect, useState, FormEvent } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { contentsApi } from '@/lib/api/contents';
-import { categoriesApi } from '@/lib/api/categories';
-import { Content, Category } from '@/lib/api/types';
+import { Content } from '@/lib/api/types';
 import TipTapEditor from '@/components/TipTapEditor';
 import TagSelector from '@/components/TagSelector';
 import { flattenCategories } from '@/lib/utils/category';
+import { useCategoryList } from '@/lib/hooks/useCategoryList';
 
 export default function PostEditPage() {
   const params = useParams();
@@ -24,18 +24,15 @@ export default function PostEditPage() {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
   const [selectedCateNo, setSelectedCateNo] = useState<number | null>(null);
-  const [allCategories, setAllCategories] = useState<Category[]>([]);
+  const { categories: allCategories } = useCategoryList();
 
   useEffect(() => {
     async function loadData() {
       try {
-        const [contentRes, catesRes] = await Promise.all([
-          contentsApi.getDetail(ctntNo),
-          categoriesApi.getList(),
-        ]);
+        const contentRes = await contentsApi.getDetail(ctntNo);
 
         if (contentRes.data) {
-          const postData = contentRes.data as any;
+          const postData = contentRes.data;
           setPost(postData);
           setTitle(postData.title || '');
           const bodyContent = postData.body || postData.content || '';
@@ -43,18 +40,14 @@ export default function PostEditPage() {
           const subTitleValue = postData.subTitle ||
             bodyContent.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 100);
           setSubTitle(subTitleValue);
-          const linkedTags: any[] = postData.tags || postData.tagList || [];
+          const linkedTags = postData.tags || postData.tagList || [];
           if (linkedTags.length > 0) {
-            setSelectedTags(linkedTags.map((t: any) => t.tagNo));
+            setSelectedTags(linkedTags.map(t => t.tagNo));
           }
           if (postData.cateNo) setSelectedCateNo(postData.cateNo);
         }
-
-        const cateData = catesRes.data as any;
-        const cateList = cateData?.list ?? cateData?.content ?? cateData ?? [];
-        setAllCategories(Array.isArray(cateList) ? cateList : []);
-      } catch (e: any) {
-        setError(e.message);
+      } catch (e: unknown) {
+        setError(e instanceof Error ? e.message : '오류가 발생했습니다.');
       } finally {
         setLoading(false);
       }
@@ -87,8 +80,8 @@ export default function PostEditPage() {
         tags: selectedTags.map(tagNo => ({ tagNo })),
       });
       router.push('/admin/contents');
-    } catch (e: any) {
-      setError(e.message || '수정 중 오류가 발생했습니다.');
+    } catch (e: unknown) {
+      setError(e instanceof Error ? e.message : '수정 중 오류가 발생했습니다.');
       setSaving(false);
     }
   }
