@@ -32,7 +32,7 @@ export default function PostEditPage() {
         const contentRes = await contentsApi.getDetail(ctntNo);
 
         if (contentRes.data) {
-          const postData = contentRes.data as any;
+          const postData = contentRes.data;
           setPost(postData);
           setTitle(postData.title || '');
           const bodyContent = postData.body || postData.content || '';
@@ -40,9 +40,9 @@ export default function PostEditPage() {
           const subTitleValue = postData.subTitle ||
             bodyContent.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 100);
           setSubTitle(subTitleValue);
-          const linkedTags: any[] = postData.tags || postData.tagList || [];
+          const linkedTags = postData.tags || postData.tagList || [];
           if (linkedTags.length > 0) {
-            setSelectedTags(linkedTags.map((t: any) => t.tagNo));
+            setSelectedTags(linkedTags.map(t => t.tagNo));
           }
           if (postData.cateNo) setSelectedCateNo(postData.cateNo);
         }

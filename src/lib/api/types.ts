@@ -20,9 +20,13 @@ export interface Content {
   ctntNo: number;
   title: string;
   subTitle?: string;
+  /** 본문 필드 — 백엔드에 따라 body 또는 content로 반환될 수 있음 */
   body?: string;
+  content?: string;
   cateNo?: number | null;
+  /** 태그 필드 — 백엔드에 따라 tags 또는 tagList로 반환될 수 있음 */
   tags?: { tagNo: number }[];
+  tagList?: { tagNo: number }[];
   inpUser?: string;
   inpDttm?: string;
   updDttm?: string;
