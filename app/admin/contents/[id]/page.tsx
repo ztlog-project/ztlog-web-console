@@ -11,6 +11,7 @@ import { flattenCategories } from '@/lib/utils/category';
 import { htmlToPlainText } from '@/lib/utils/text';
 import DOMPurify from 'dompurify';
 import { useCategoryList } from '@/lib/hooks/useCategoryList';
+import AlertMessage from '@/components/AlertMessage';
 
 export default function PostEditPage() {
   const params = useParams();
@@ -101,11 +102,14 @@ export default function PostEditPage() {
         <div>
           <h1 className="text-2xl font-bold text-text">게시물 수정</h1>
           <p className="mt-1 text-sm text-text-light">{post.title}</p>
+          {post.inpDttm && (
+            <p className="mt-0.5 text-xs text-text-light">작성일: {new Date(post.inpDttm).toLocaleDateString('ko-KR')}</p>
+          )}
         </div>
         <Link href="/admin/contents" className="text-sm text-text-light hover:underline">목록으로</Link>
       </div>
 
-      {error && <div className="p-3 mb-6 text-sm rounded-lg bg-danger/10 text-danger">{error}</div>}
+      {error && <AlertMessage message={error} />}
 
       <form onSubmit={handleSubmit} className="grid grid-cols-1 gap-6 xl:grid-cols-3">
         <div className="space-y-6 xl:col-span-2">

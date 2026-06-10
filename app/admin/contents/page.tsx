@@ -6,6 +6,7 @@ import Link from 'next/link';
 import Pagination from '@/components/Pagination';
 import ConfirmModal from '@/components/ConfirmModal';
 import { contentsApi } from '@/lib/api/contents';
+import AlertMessage from '@/components/AlertMessage';
 import { Content, ContentSearchType, pageItems, pageTotalElements, pageTotalPages } from '@/lib/api/types';
 
 export default function PostsListPage() {
@@ -182,9 +183,7 @@ export default function PostsListPage() {
         </form>
       </div>
 
-      {error && (
-        <div className="mb-4 p-4 text-sm rounded-lg bg-danger/10 text-danger">{error}</div>
-      )}
+      {error && <AlertMessage message={error} />}
 
       {loading ? (
         <div className="flex items-center justify-center py-20">

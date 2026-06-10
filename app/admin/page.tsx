@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import StatCard from '@/components/StatCard';
+import AlertMessage from '@/components/AlertMessage';
 import { dashboardApi } from '@/lib/api/dashboard';
 import { contentsApi } from '@/lib/api/contents';
 import { tagsApi } from '@/lib/api/tags';
@@ -87,7 +88,7 @@ export default function DashboardPage() {
           <h1 className="text-2xl font-bold text-text">대시보드</h1>
           <p className="text-sm text-text-light mt-1">블로그 현황을 한눈에 확인하세요</p>
         </div>
-        <div className="p-4 bg-danger/10 text-danger text-sm rounded-lg mb-6">{error}</div>
+        <AlertMessage message={error} />
       </div>
     );
   }

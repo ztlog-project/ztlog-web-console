@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { categoriesApi } from '@/lib/api/categories';
 import { Category } from '@/lib/api/types';
 import ConfirmModal from '@/components/ConfirmModal';
+import AlertMessage from '@/components/AlertMessage';
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -619,7 +620,7 @@ export default function CategoriesPage() {
           <div className="text-text-light">로딩 중...</div>
         </div>
       ) : error ? (
-        <div className="p-4 text-sm rounded-lg bg-danger/10 text-danger">{error}</div>
+        <AlertMessage message={error} />
       ) : tree.length === 0 ? (
         <div className="p-12 text-center border rounded-lg bg-card border-border">
           <p className="text-text-light text-sm">등록된 카테고리가 없습니다.</p>

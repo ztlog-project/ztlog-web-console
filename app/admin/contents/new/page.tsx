@@ -10,6 +10,7 @@ import { flattenCategories } from '@/lib/utils/category';
 import { htmlToPlainText } from '@/lib/utils/text';
 import DOMPurify from 'dompurify';
 import { useCategoryList } from '@/lib/hooks/useCategoryList';
+import AlertMessage from '@/components/AlertMessage';
 
 export default function PostCreatePage() {
   const [title, setTitle] = useState('');
@@ -73,7 +74,7 @@ export default function PostCreatePage() {
         </Link>
       </div>
 
-      {error && <div className="p-3 mb-6 text-sm rounded-lg bg-danger/10 text-danger">{error}</div>}
+      {error && <AlertMessage message={error} />}
 
       <form onSubmit={handleSubmit}>
         <div className="grid grid-cols-1 gap-6 xl:grid-cols-3">

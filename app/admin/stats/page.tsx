@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { statsApi, ViewRankingItem, DailyGrowthItem, CommentStatsItem } from '@/lib/api/stats';
+import AlertMessage from '@/components/AlertMessage';
 
 function getToday() {
   return new Date().toISOString().slice(0, 10);
@@ -27,6 +28,10 @@ function actionButtonClass(status: ActionStatus) {
   return `${base} bg-primary/10 text-primary border-primary/30 hover:bg-primary/20 disabled:opacity-50`;
 }
 
+const VIEW_RANKING_COLUMNS: (keyof ViewRankingItem)[] = ['ctntNo', 'title', 'totalViewCnt', 'todayViewCnt', 'viewCnt'];
+const DAILY_GROWTH_COLUMNS: (keyof DailyGrowthItem)[] = ['statDate', 'baseDate', 'viewCnt', 'commentCnt', 'totalViewCnt', 'totalCommentCnt'];
+const COMMENT_STATS_COLUMNS: (keyof CommentStatsItem)[] = ['ctntNo', 'title', 'commentCnt', 'totalCommentCnt'];
+
 const COLUMN_LABELS: Record<string, string> = {
   ctntNo: '번호',
   title: '제목',
@@ -40,11 +45,12 @@ const COLUMN_LABELS: Record<string, string> = {
 };
 
 interface DataTableProps {
-  rows: Record<string, any>[];
+  rows: Record<string, unknown>[];
+  columns?: string[];
   loading?: boolean;
 }
 
-function DataTable({ rows, loading }: DataTableProps) {
+function DataTable({ rows, columns, loading }: DataTableProps) {
   if (loading || rows.length === 0) {
     return (
       <div className="tbl-empty">
@@ -52,7 +58,7 @@ function DataTable({ rows, loading }: DataTableProps) {
       </div>
     );
   }
-  const keys = Object.keys(rows[0]);
+  const keys = columns ? columns.filter(k => k in rows[0]) : Object.keys(rows[0]);
   return (
     <div className="overflow-x-auto">
       <table className="w-full">
@@ -175,7 +181,7 @@ export default function StatsPage() {
         <p className="page-subtitle">블로그 통계 데이터를 확인하세요</p>
       </div>
 
-      {error && <div className="alert-danger">{error}</div>}
+      {error && <AlertMessage message={error} />}
 
       {/* 집계 실행 액션 */}
       <div className="card p-6 mb-6">
@@ -220,7 +226,7 @@ export default function StatsPage() {
             </button>
           </div>
         </div>
-        <DataTable rows={dailyGrowth} loading={dailyLoading} />
+        <DataTable rows={dailyGrowth} columns={DAILY_GROWTH_COLUMNS} loading={dailyLoading} />
       </div>
 
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
@@ -230,7 +236,7 @@ export default function StatsPage() {
             <h2 className="card-title">조회수 통계 현황</h2>
             <button onClick={loadInitialData} className="btn-ghost">새로고침</button>
           </div>
-          <DataTable rows={viewRanking} />
+          <DataTable rows={viewRanking} columns={VIEW_RANKING_COLUMNS} />
         </div>
 
         {/* 댓글 통계 */}
@@ -239,7 +245,7 @@ export default function StatsPage() {
             <h2 className="card-title">실시간 댓글 통계</h2>
             <button onClick={loadInitialData} className="btn-ghost">새로고침</button>
           </div>
-          <DataTable rows={commentStats} />
+          <DataTable rows={commentStats} columns={COMMENT_STATS_COLUMNS} />
         </div>
       </div>
     </div>

@@ -57,9 +57,9 @@ export const api = {
       : endpoint;
     return apiClient<T>(url);
   },
-  post: <T = any>(endpoint: string, data: any): Promise<T> =>
+  post: <T = any>(endpoint: string, data: unknown): Promise<T> =>
     apiClient<T>(endpoint, { method: 'POST', body: JSON.stringify(data) }),
-  put: <T = any>(endpoint: string, data: any): Promise<T> =>
+  put: <T = any>(endpoint: string, data: unknown): Promise<T> =>
     apiClient<T>(endpoint, { method: 'PUT', body: JSON.stringify(data) }),
   delete: <T = any>(endpoint: string): Promise<T> =>
     apiClient<T>(endpoint, { method: 'DELETE' })

@@ -4,6 +4,7 @@ import { useEffect, useState, FormEvent } from 'react';
 import { tagsApi } from '@/lib/api/tags';
 import { Tag } from '@/lib/api/types';
 import ConfirmModal from '@/components/ConfirmModal';
+import AlertMessage from '@/components/AlertMessage';
 
 export default function TagsPage() {
   const [tagList, setTagList] = useState<Tag[]>([]);
@@ -107,7 +108,7 @@ export default function TagsPage() {
       <div className="p-6 mb-6 border rounded-lg shadow-sm bg-card border-border">
         <h2 className="mb-4 text-sm font-semibold tracking-wider uppercase text-text">새 태그 추가</h2>
         {error && (
-          <div className="mb-3 p-3 text-sm rounded-lg bg-danger/10 text-danger">{error}</div>
+          <AlertMessage message={error} />
         )}
         <form onSubmit={addTag} className="flex flex-col gap-3 sm:flex-row">
           <input
