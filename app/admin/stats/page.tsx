@@ -27,6 +27,18 @@ function actionButtonClass(status: ActionStatus) {
   return `${base} bg-primary/10 text-primary border-primary/30 hover:bg-primary/20 disabled:opacity-50`;
 }
 
+const COLUMN_LABELS: Record<string, string> = {
+  ctntNo: '번호',
+  title: '제목',
+  totalViewCnt: '누적 조회수',
+  todayViewCnt: '오늘 조회수',
+  viewCnt: '조회수',
+  statDate: '날짜',
+  baseDate: '날짜',
+  commentCnt: '댓글수',
+  totalCommentCnt: '누적 댓글수',
+};
+
 interface DataTableProps {
   rows: Record<string, any>[];
   loading?: boolean;
@@ -47,7 +59,7 @@ function DataTable({ rows, loading }: DataTableProps) {
         <thead>
           <tr className="border-b border-border">
             {keys.map(k => (
-              <th key={k} className="tbl-th">{k}</th>
+              <th key={k} className="tbl-th">{COLUMN_LABELS[k] ?? k}</th>
             ))}
           </tr>
         </thead>

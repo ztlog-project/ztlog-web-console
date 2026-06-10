@@ -8,6 +8,7 @@ import TipTapEditor from '@/components/TipTapEditor';
 import TagSelector from '@/components/TagSelector';
 import { flattenCategories } from '@/lib/utils/category';
 import { htmlToPlainText } from '@/lib/utils/text';
+import DOMPurify from 'dompurify';
 import { useCategoryList } from '@/lib/hooks/useCategoryList';
 
 export default function PostCreatePage() {
@@ -18,7 +19,7 @@ export default function PostCreatePage() {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
   const [selectedCateNo, setSelectedCateNo] = useState<number | null>(null);
-  const { categories: allCategories } = useCategoryList();
+  const { categories: allCategories, error: categoryError } = useCategoryList();
   const router = useRouter();
 
   useEffect(() => {
@@ -37,10 +38,11 @@ export default function PostCreatePage() {
     setError('');
 
     try {
+      const safeBody = typeof window !== 'undefined' ? DOMPurify.sanitize(body) : body;
       await contentsApi.create({
         title: title.trim(),
         subTitle: subTitle.trim(),
-        body,
+        body: safeBody,
         cateNo: selectedCateNo,
         tags: selectedTags.map(tagNo => ({ tagNo })),
       });
@@ -114,6 +116,9 @@ export default function PostCreatePage() {
             {/* 카테고리 */}
             <div className="p-6 border rounded-lg shadow-sm bg-card border-border">
               <h3 className="mb-4 text-sm font-semibold tracking-wider uppercase text-text">카테고리</h3>
+              {categoryError && (
+                <p className="mb-2 text-xs text-danger">{categoryError}</p>
+              )}
               <select
                 value={selectedCateNo ?? ''}
                 onChange={(e) => setSelectedCateNo(e.target.value ? Number(e.target.value) : null)}

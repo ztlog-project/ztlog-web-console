@@ -9,6 +9,7 @@ import TipTapEditor from '@/components/TipTapEditor';
 import TagSelector from '@/components/TagSelector';
 import { flattenCategories } from '@/lib/utils/category';
 import { htmlToPlainText } from '@/lib/utils/text';
+import DOMPurify from 'dompurify';
 import { useCategoryList } from '@/lib/hooks/useCategoryList';
 
 export default function PostEditPage() {
@@ -74,11 +75,12 @@ export default function PostEditPage() {
     setSaving(true);
     setError('');
     try {
+      const safeBody = typeof window !== 'undefined' ? DOMPurify.sanitize(body) : body;
       await contentsApi.update({
         ctntNo,
         title: title.trim(),
         subTitle,
-        body,
+        body: safeBody,
         cateNo: selectedCateNo,
         tags: selectedTags.map(tagNo => ({ tagNo })),
       });
