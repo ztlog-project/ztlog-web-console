@@ -64,7 +64,7 @@ export function pageTotalElements<T>(data: PaginatedResponse<T>, fallback: numbe
 }
 
 export function pageTotalPages<T>(data: PaginatedResponse<T>, itemCount: number): number {
-  return data.totalPages ?? Math.ceil((data.totalElements ?? itemCount) / 10) || 1;
+  return (data.totalPages ?? Math.ceil((data.totalElements ?? itemCount) / 10)) || 1;
 }
 
 export type ContentSearchType = 'TITLE' | 'CONTENT' | 'TITLE_CONTENT' | 'TAG';

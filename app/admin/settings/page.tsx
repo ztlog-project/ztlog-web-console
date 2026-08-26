@@ -87,12 +87,12 @@ export default function SettingsPage() {
         <p className="text-text-light text-sm mb-5">보안을 위해 주기적으로 비밀번호를 변경하세요</p>
 
         {passwordError && (
-          <div className="mb-4 px-4 py-3 bg-danger/10 border border-danger/20 rounded-lg text-sm text-danger">
+          <div role="alert" className="mb-4 px-4 py-3 bg-danger/10 border border-danger/20 rounded-lg text-sm text-danger">
             {passwordError}
           </div>
         )}
         {passwordSuccess && (
-          <div className="mb-4 px-4 py-3 bg-success/10 border border-success/20 rounded-lg text-sm text-success">
+          <div role="status" className="mb-4 px-4 py-3 bg-success/10 border border-success/20 rounded-lg text-sm text-success">
             {passwordSuccess}
           </div>
         )}
@@ -201,7 +201,7 @@ export default function SettingsPage() {
               <span className="font-bold text-danger">탈퇴합니다</span>를 입력하세요.
             </p>
             {withdrawError && (
-              <div className="mb-3 px-3 py-2 bg-danger/10 border border-danger/20 rounded text-xs text-danger">
+              <div role="alert" className="mb-3 px-3 py-2 bg-danger/10 border border-danger/20 rounded text-xs text-danger">
                 {withdrawError}
               </div>
             )}

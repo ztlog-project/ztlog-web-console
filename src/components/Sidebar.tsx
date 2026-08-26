@@ -102,11 +102,13 @@ export default function Sidebar({ open, onOpenChange }: SidebarProps) {
                   <>
                     <button
                       onClick={() => toggleMenu(item.label)}
-                      className="w-full flex items-center justify-between px-6 py-3 text-sm text-gray-300 hover:bg-sidebar-hover hover:text-white transition-colors"
+                      aria-expanded={!!expandedMenus[item.label]}
+                      aria-controls={`submenu-${item.label}`}
+                      className="w-full flex items-center justify-between px-6 py-3 text-sm text-gray-300 hover:bg-sidebar-hover hover:text-white transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary focus-visible:-outline-offset-2"
                     >
                       <span className="flex items-center gap-3">
                         {item.icon === 'article' && (
-                          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                             <path
                               strokeLinecap="round"
                               strokeLinejoin="round"
@@ -122,6 +124,7 @@ export default function Sidebar({ open, onOpenChange }: SidebarProps) {
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"
+                        aria-hidden="true"
                       >
                         <path
                           strokeLinecap="round"
@@ -132,7 +135,7 @@ export default function Sidebar({ open, onOpenChange }: SidebarProps) {
                       </svg>
                     </button>
                     {expandedMenus[item.label] && (
-                      <ul className="bg-black/20">
+                      <ul id={`submenu-${item.label}`} className="bg-black/20">
                         {item.children.map((child) => (
                           <li key={child.href}>
                             <Link

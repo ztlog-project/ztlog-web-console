@@ -74,7 +74,7 @@ export default function DashboardPage() {
           <h1 className="text-2xl font-bold text-text">대시보드</h1>
           <p className="text-sm text-text-light mt-1">블로그 현황을 한눈에 확인하세요</p>
         </div>
-        <div className="flex items-center justify-center py-20">
+        <div role="status" aria-live="polite" className="flex items-center justify-center py-20">
           <div className="text-text-light">로딩 중...</div>
         </div>
       </div>
@@ -122,13 +122,13 @@ export default function DashboardPage() {
             <table className="w-full">
               <thead>
                 <tr className="border-b border-border">
-                  <th className="text-left text-xs font-medium text-text-light uppercase tracking-wider px-6 py-3">
+                  <th scope="col" className="text-left text-xs font-medium text-text-light uppercase tracking-wider px-6 py-3">
                     제목
                   </th>
-                  <th className="text-left text-xs font-medium text-text-light uppercase tracking-wider px-6 py-3">
+                  <th scope="col" className="text-left text-xs font-medium text-text-light uppercase tracking-wider px-6 py-3">
                     작성자
                   </th>
-                  <th className="text-left text-xs font-medium text-text-light uppercase tracking-wider px-6 py-3">
+                  <th scope="col" className="text-left text-xs font-medium text-text-light uppercase tracking-wider px-6 py-3">
                     작성일
                   </th>
                 </tr>

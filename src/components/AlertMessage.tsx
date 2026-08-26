@@ -3,5 +3,9 @@ interface AlertMessageProps {
 }
 
 export default function AlertMessage({ message }: AlertMessageProps) {
-  return <div className="alert-danger">{message}</div>;
+  return (
+    <div className="alert-danger" role="alert">
+      {message}
+    </div>
+  );
 }

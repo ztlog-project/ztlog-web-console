@@ -53,7 +53,7 @@ interface DataTableProps {
 function DataTable({ rows, columns, loading }: DataTableProps) {
   if (loading || rows.length === 0) {
     return (
-      <div className="tbl-empty">
+      <div className="tbl-empty" role="status" aria-live="polite">
         {loading ? '조회 중...' : '데이터가 없습니다.'}
       </div>
     );
@@ -65,7 +65,7 @@ function DataTable({ rows, columns, loading }: DataTableProps) {
         <thead>
           <tr className="border-b border-border">
             {keys.map(k => (
-              <th key={k} className="tbl-th">{COLUMN_LABELS[k] ?? k}</th>
+              <th key={k} scope="col" className="tbl-th">{COLUMN_LABELS[k] ?? k}</th>
             ))}
           </tr>
         </thead>
@@ -167,7 +167,7 @@ export default function StatsPage() {
           <h1 className="page-title">통계</h1>
           <p className="page-subtitle">블로그 통계 데이터를 확인하세요</p>
         </div>
-        <div className="flex items-center justify-center py-20">
+        <div role="status" aria-live="polite" className="flex items-center justify-center py-20">
           <div className="text-text-light">로딩 중...</div>
         </div>
       </div>

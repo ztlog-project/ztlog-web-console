@@ -186,7 +186,7 @@ export default function PostsListPage() {
       {error && <AlertMessage message={error} />}
 
       {loading ? (
-        <div className="flex items-center justify-center py-20">
+        <div role="status" aria-live="polite" className="flex items-center justify-center py-20">
           <div className="text-text-light">로딩 중...</div>
         </div>
       ) : (
@@ -195,12 +195,12 @@ export default function PostsListPage() {
             <table className="w-full">
               <thead>
                 <tr className="border-b border-border">
-                  <th className="w-10 px-6 py-3 text-xs font-medium tracking-wider text-left uppercase text-text-light">No</th>
-                  <th className="px-6 py-3 text-xs font-medium tracking-wider text-left uppercase text-text-light">제목</th>
-                  <th className="px-6 py-3 text-xs font-medium tracking-wider text-left uppercase text-text-light">작성자</th>
-                  <th className="px-6 py-3 text-xs font-medium tracking-wider text-left uppercase text-text-light">작성일</th>
-                  <th className="px-6 py-3 text-xs font-medium tracking-wider text-left uppercase text-text-light">수정일</th>
-                  <th className="px-6 py-3 text-xs font-medium tracking-wider text-left uppercase text-text-light">액션</th>
+                  <th scope="col" className="w-10 px-6 py-3 text-xs font-medium tracking-wider text-left uppercase text-text-light">No</th>
+                  <th scope="col" className="px-6 py-3 text-xs font-medium tracking-wider text-left uppercase text-text-light">제목</th>
+                  <th scope="col" className="px-6 py-3 text-xs font-medium tracking-wider text-left uppercase text-text-light">작성자</th>
+                  <th scope="col" className="px-6 py-3 text-xs font-medium tracking-wider text-left uppercase text-text-light">작성일</th>
+                  <th scope="col" className="px-6 py-3 text-xs font-medium tracking-wider text-left uppercase text-text-light">수정일</th>
+                  <th scope="col" className="px-6 py-3 text-xs font-medium tracking-wider text-left uppercase text-text-light">액션</th>
                 </tr>
               </thead>
               <tbody>
@@ -231,10 +231,11 @@ export default function PostsListPage() {
                       <div className="flex items-center gap-2">
                         <Link
                           href={`/admin/contents/${post.ctntNo}`}
-                          className="p-1.5 text-text-light hover:text-primary transition-colors rounded-lg hover:bg-primary/10"
+                          aria-label={`${post.title} 수정`}
                           title="수정"
+                          className="p-1.5 text-text-light hover:text-primary transition-colors rounded-lg hover:bg-primary/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-2"
                         >
-                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                             <path
                               strokeLinecap="round"
                               strokeLinejoin="round"
@@ -245,10 +246,11 @@ export default function PostsListPage() {
                         </Link>
                         <button
                           onClick={() => setConfirmDelete(post.ctntNo)}
-                          className="p-1.5 text-text-light hover:text-danger transition-colors rounded-lg hover:bg-danger/10"
+                          aria-label={`${post.title} 삭제`}
                           title="삭제"
+                          className="p-1.5 text-text-light hover:text-danger transition-colors rounded-lg hover:bg-danger/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-danger focus-visible:outline-offset-2"
                         >
-                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                             <path
                               strokeLinecap="round"
                               strokeLinejoin="round"

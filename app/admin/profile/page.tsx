@@ -32,7 +32,7 @@ export default function ProfilePage() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-64">
+      <div role="status" aria-live="polite" className="flex items-center justify-center h-64">
         <p className="text-text-light">로딩 중...</p>
       </div>
     );
@@ -47,7 +47,7 @@ export default function ProfilePage() {
       </div>
 
       {error && (
-        <div className="px-4 py-3 bg-danger/10 border border-danger/20 rounded-lg text-sm text-danger">
+        <div role="alert" className="px-4 py-3 bg-danger/10 border border-danger/20 rounded-lg text-sm text-danger">
           {error}
         </div>
       )}

@@ -107,20 +107,22 @@ export default function TagSelector({ selectedTags, onChange, disabled }: TagSel
                 type="button"
                 onClick={() => saveTagEdit(tag.tagNo)}
                 disabled={tagSaving}
-                className="p-1 text-success hover:bg-success/10 rounded transition-colors disabled:opacity-50"
+                aria-label={`${tag.tagName} 태그 수정 저장`}
                 title="저장"
+                className="p-1 text-success hover:bg-success/10 rounded transition-colors disabled:opacity-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-2"
               >
-                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
                 </svg>
               </button>
               <button
                 type="button"
                 onClick={() => setEditingTagNo(null)}
-                className="p-1 text-text-light hover:bg-bg rounded transition-colors"
+                aria-label={`${tag.tagName} 태그 수정 취소`}
                 title="취소"
+                className="p-1 text-text-light hover:bg-bg rounded transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-2"
               >
-                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
                 </svg>
               </button>
@@ -131,7 +133,8 @@ export default function TagSelector({ selectedTags, onChange, disabled }: TagSel
                 type="button"
                 onClick={() => toggleTag(tag.tagNo)}
                 disabled={disabled}
-                className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors
+                aria-pressed={selectedTags.includes(tag.tagNo)}
+                className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-2
                   ${selectedTags.includes(tag.tagNo)
                     ? 'bg-primary text-white'
                     : 'bg-bg text-text-light hover:bg-border'}`}
@@ -142,10 +145,11 @@ export default function TagSelector({ selectedTags, onChange, disabled }: TagSel
                 type="button"
                 onClick={() => { setEditingTagNo(tag.tagNo); setEditingTagName(tag.tagName); }}
                 disabled={tagSaving || disabled}
-                className="opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded text-text-light hover:text-primary hover:bg-primary/10 disabled:opacity-0"
+                aria-label={`${tag.tagName} 태그 이름 수정`}
                 title="태그 수정"
+                className="opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded text-text-light hover:text-primary hover:bg-primary/10 disabled:opacity-0 focus-visible:opacity-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-2"
               >
-                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                 </svg>
               </button>

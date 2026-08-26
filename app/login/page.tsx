@@ -53,7 +53,7 @@ export default function LoginPage() {
         {/* Login Card */}
         <div className="bg-card rounded-lg shadow-lg border border-border p-8">
           {error && (
-            <div className="mb-4 p-3 bg-danger/10 text-danger text-sm rounded-lg">
+            <div role="alert" className="mb-4 p-3 bg-danger/10 text-danger text-sm rounded-lg">
               {error}
             </div>
           )}

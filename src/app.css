@@ -7,7 +7,8 @@
   --color-primary: #4e73df;
   --color-primary-hover: #3a5bc7;
   --color-text: #333333;
-  --color-text-light: #858796;
+  /* #6b6f80 — darkened from #858796 to meet WCAG AA 4.5:1 contrast on white/card backgrounds */
+  --color-text-light: #6b6f80;
   --color-border: #e3e6f0;
   --color-success: #1cc88a;
   --color-warning: #f6c23e;
@@ -242,9 +243,22 @@ body {
   margin-top: 0.25em;
 }
 
+.tiptap-content .ProseMirror img, .tiptap-preview img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+  display: block;
+  margin: 0.75em 0;
+}
+
+.tiptap-content .ProseMirror img.ProseMirror-selectednode {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
 /* Editor-only styles */
 .tiptap-content .ProseMirror {
-  min-height: 25rem;
+  min-height: 60vh;
 }
 
 .tiptap-content .ProseMirror p.is-editor-empty:first-child::before {
@@ -253,4 +267,36 @@ body {
   color: var(--color-text-light);
   pointer-events: none;
   height: 0;
+}
+
+/*
+ * 블로그 미리보기 래퍼 — 본문 자체는 ztlog-web-ui와 동일한 @uiw/react-markdown-preview가
+ * 자체 스타일(.wmde-markdown)로 그리므로, 여기서는 제목과 전체 폭만 사이트에 맞춘다.
+ * 값은 ztlog-web-ui/src/styles/Styles.css의 .post-header h1 / 리딩 컬럼 폭 참고.
+ */
+.blog-preview {
+  max-width: 42rem;
+  margin: 0 auto;
+}
+
+.blog-preview-title {
+  font-size: 2rem;
+  font-weight: 800;
+  line-height: 1.3;
+  margin-bottom: 1.25rem;
+  color: #212529;
+}
+
+/*
+ * @uiw/react-markdown-preview는 .wmde-markdown 자체에 흰 배경(--color-canvas-default)을
+ * 깔아서 카드처럼 보이게 하는데, 이 작성 화면은 카드 없이 페이지 배경과 이어지는
+ * 몰입형 레이아웃이라 그 흰 배경만 투명하게 걷어낸다. 코드블록/테이블 등 내부 배경은 그대로 둔다.
+ */
+.blog-preview .wmde-markdown {
+  background-color: transparent;
+}
+
+.blog-preview-empty {
+  color: var(--color-text-light);
+  font-style: italic;
 }
